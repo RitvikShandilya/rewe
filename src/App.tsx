@@ -179,31 +179,68 @@ export function App() {
     window.scrollTo(0, 0);
   }, [screenId]);
 
+  useEffect(() => {
+    const updateViewportSize = () => {
+      const viewport = window.visualViewport;
+      const width = viewport?.width ?? window.innerWidth;
+      const height = viewport?.height ?? window.innerHeight;
+      const scale = Math.min(width / 393, height / 804, 1);
+
+      document.documentElement.style.setProperty('--visible-width', `${width}px`);
+      document.documentElement.style.setProperty('--visible-height', `${height}px`);
+      document.documentElement.style.setProperty('--fit-scale', `${scale}`);
+      document.documentElement.style.setProperty('--frame-width', `${393 * scale}px`);
+      document.documentElement.style.setProperty('--frame-height', `${804 * scale}px`);
+    };
+
+    updateViewportSize();
+
+    window.visualViewport?.addEventListener('resize', updateViewportSize);
+    window.visualViewport?.addEventListener('scroll', updateViewportSize);
+    window.addEventListener('resize', updateViewportSize);
+    window.addEventListener('orientationchange', updateViewportSize);
+
+    return () => {
+      window.visualViewport?.removeEventListener('resize', updateViewportSize);
+      window.visualViewport?.removeEventListener('scroll', updateViewportSize);
+      window.removeEventListener('resize', updateViewportSize);
+      window.removeEventListener('orientationchange', updateViewportSize);
+    };
+  }, []);
+
   return (
     <main className="prototype-stage" aria-label="REWE loyalty click prototype">
-      <div className="phone-shell" aria-live="polite">
-        <img className="screen-image" src={screen.image} alt={screen.title} draggable={false} />
+      <div className="phone-frame">
+        <div className="phone-shell" aria-live="polite">
+          <img className="screen-image" src={screen.image} alt={screen.title} draggable={false} />
 
-        {screen.hotspots.map((hotspot) => (
-          <button
-            className="hotspot"
-            key={hotspot.label}
-            type="button"
-            aria-label={hotspot.label}
-            onClick={() => navigate(hotspot.to)}
-            style={{
-              left: `${hotspot.left}px`,
-              top: `${hotspot.top}px`,
-              width: `${hotspot.width}px`,
-              height: `${hotspot.height}px`,
-            }}
-          />
-        ))}
+          {screen.hotspots.map((hotspot) => (
+            <button
+              className="hotspot"
+              key={hotspot.label}
+              type="button"
+              aria-label={hotspot.label}
+              onClick={() => navigate(hotspot.to)}
+              style={{
+                left: `${hotspot.left}px`,
+                top: `${hotspot.top}px`,
+                width: `${hotspot.width}px`,
+                height: `${hotspot.height}px`,
+              }}
+            />
+          ))}
+        </div>
       </div>
 
       <div className="step-dots" aria-hidden="true">
         {screens.map((item, index) => (
           <span className={index === activeIndex ? 'active' : ''} key={item.id} />
+        ))}
+      </div>
+
+      <div className="preload-images" aria-hidden="true">
+        {screens.map((item) => (
+          <img alt="" key={item.id} src={item.image} />
         ))}
       </div>
     </main>
