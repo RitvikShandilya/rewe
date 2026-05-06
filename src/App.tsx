@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { type CSSProperties, useCallback, useEffect, useMemo, useState } from 'react';
 import homeImage from './assets/home.png';
 import matchLocationImage from './assets/match-location.png';
 import customizeBasketImage from './assets/customize-basket.png';
@@ -19,6 +19,10 @@ type Screen = {
   id: ScreenId;
   title: string;
   image: string;
+  dock?: {
+    top: number;
+    height: number;
+  };
   hotspots: Hotspot[];
 };
 
@@ -27,6 +31,10 @@ const screens: Screen[] = [
     id: 'home',
     title: 'Home',
     image: homeImage,
+    dock: {
+      top: 686,
+      height: 118,
+    },
     hotspots: [
       {
         label: 'Open match day card',
@@ -50,6 +58,10 @@ const screens: Screen[] = [
     id: 'match-location',
     title: 'Match location',
     image: matchLocationImage,
+    dock: {
+      top: 714,
+      height: 90,
+    },
     hotspots: [
       {
         label: 'Back to home',
@@ -87,6 +99,10 @@ const screens: Screen[] = [
     id: 'customize-basket',
     title: 'Customize basket',
     image: customizeBasketImage,
+    dock: {
+      top: 714,
+      height: 90,
+    },
     hotspots: [
       {
         label: 'Back to match location',
@@ -110,6 +126,10 @@ const screens: Screen[] = [
     id: 'ready-basket',
     title: 'Ready basket',
     image: readyBasketImage,
+    dock: {
+      top: 714,
+      height: 90,
+    },
     hotspots: [
       {
         label: 'Back to customize basket',
@@ -147,6 +167,7 @@ function getNextScreen(id: ScreenId): ScreenId {
 
 export function App() {
   const [screenId, setScreenId] = useState<ScreenId>('home');
+  const [dockNeeded, setDockNeeded] = useState(true);
   const screen = screenById[screenId];
 
   const navigate = useCallback((nextScreenId?: ScreenId) => {
@@ -159,6 +180,19 @@ export function App() {
     () => screens.findIndex((item) => item.id === screenId),
     [screenId],
   );
+
+  const dockHotspots = useMemo(() => {
+    if (!screen.dock) {
+      return [];
+    }
+
+    return screen.hotspots
+      .filter((hotspot) => hotspot.top + hotspot.height > screen.dock!.top)
+      .map((hotspot) => ({
+        ...hotspot,
+        top: hotspot.top - screen.dock!.top,
+      }));
+  }, [screen]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -184,13 +218,13 @@ export function App() {
       const viewport = window.visualViewport;
       const width = viewport?.width ?? window.innerWidth;
       const height = viewport?.height ?? window.innerHeight;
-      const scale = Math.min(width / 393, height / 804, 1);
+      const scale = Math.min(width / 393, 1);
 
       document.documentElement.style.setProperty('--visible-width', `${width}px`);
-      document.documentElement.style.setProperty('--visible-height', `${height}px`);
       document.documentElement.style.setProperty('--fit-scale', `${scale}`);
       document.documentElement.style.setProperty('--frame-width', `${393 * scale}px`);
       document.documentElement.style.setProperty('--frame-height', `${804 * scale}px`);
+      setDockNeeded(height < 804 * scale);
     };
 
     updateViewportSize();
@@ -231,6 +265,41 @@ export function App() {
           ))}
         </div>
       </div>
+
+      {screen.dock && dockNeeded ? (
+        <div
+          className="screen-dock"
+          style={
+            {
+              '--dock-height': `${screen.dock.height}px`,
+            } as CSSProperties
+          }
+        >
+          <img
+            className="screen-dock-image"
+            src={screen.image}
+            alt=""
+            draggable={false}
+            style={{ top: `-${screen.dock.top}px` }}
+          />
+
+          {dockHotspots.map((hotspot) => (
+            <button
+              className="hotspot"
+              key={`dock-${hotspot.label}`}
+              type="button"
+              aria-label={hotspot.label}
+              onClick={() => navigate(hotspot.to)}
+              style={{
+                left: `${hotspot.left}px`,
+                top: `${hotspot.top}px`,
+                width: `${hotspot.width}px`,
+                height: `${hotspot.height}px`,
+              }}
+            />
+          ))}
+        </div>
+      ) : null}
 
       <div className="step-dots" aria-hidden="true">
         {screens.map((item, index) => (
