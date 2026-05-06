@@ -31,7 +31,7 @@ const screens: Screen[] = [
       {
         label: 'Open match day card',
         left: 20,
-        top: 237,
+        top: 189,
         width: 353,
         height: 310,
         to: 'match-location',
@@ -39,7 +39,7 @@ const screens: Screen[] = [
       {
         label: 'Open match day planner',
         left: 40,
-        top: 473,
+        top: 425,
         width: 313,
         height: 54,
         to: 'match-location',
@@ -54,7 +54,7 @@ const screens: Screen[] = [
       {
         label: 'Back to home',
         left: 16,
-        top: 65,
+        top: 17,
         width: 36,
         height: 36,
         to: 'home',
@@ -62,21 +62,21 @@ const screens: Screen[] = [
       {
         label: 'Watching at home',
         left: 21,
-        top: 253,
+        top: 205,
         width: 351,
         height: 151,
       },
       {
         label: 'Going to the stadium',
         left: 20,
-        top: 423,
+        top: 375,
         width: 352,
         height: 151,
       },
       {
         label: 'Continue',
         left: 28,
-        top: 773,
+        top: 725,
         width: 337,
         height: 48,
         to: 'customize-basket',
@@ -91,7 +91,7 @@ const screens: Screen[] = [
       {
         label: 'Back to match location',
         left: 16,
-        top: 65,
+        top: 17,
         width: 36,
         height: 36,
         to: 'match-location',
@@ -99,7 +99,7 @@ const screens: Screen[] = [
       {
         label: 'Add to shopping list',
         left: 28,
-        top: 773,
+        top: 725,
         width: 337,
         height: 48,
         to: 'ready-basket',
@@ -114,7 +114,7 @@ const screens: Screen[] = [
       {
         label: 'Back to customize basket',
         left: 16,
-        top: 65,
+        top: 17,
         width: 36,
         height: 36,
         to: 'customize-basket',
@@ -122,7 +122,7 @@ const screens: Screen[] = [
       {
         label: 'Shop your way',
         left: 28,
-        top: 773,
+        top: 725,
         width: 337,
         height: 48,
       },
@@ -174,6 +174,10 @@ export function App() {
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
   }, []);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [screenId]);
 
   return (
     <main className="prototype-stage" aria-label="REWE loyalty click prototype">

@@ -4,7 +4,7 @@ React/Vite dummy click prototype based on the Figma selection:
 
 `https://www.figma.com/design/XIiPagYAEkq2gtLIkqWiwV/Rewe-App-Loyalty--Future-Concept?node-id=62-5242`
 
-The visible phone screens are direct PNG exports from the selected Figma section, kept at the original 393 x 852 frame size. Invisible hotspots sit on top of the exported screens for click-through behavior.
+The visible phone screens are derived from direct PNG exports from the selected Figma section. The iOS status/notification bar is cropped out, leaving the 393 x 804 app content area for browser viewing on an iPhone 15. Invisible hotspots sit on top of the exported screens for click-through behavior.
 
 ## Run
 
