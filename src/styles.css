@@ -7,6 +7,8 @@
   --fit-scale: 1;
   --frame-width: 393px;
   --frame-height: 804px;
+  --screen-width: 393px;
+  --screen-height: 804px;
   background: #e4e4e4;
   -webkit-font-smoothing: antialiased;
   text-rendering: geometricPrecision;
@@ -72,8 +74,8 @@ button {
 .phone-shell {
   position: absolute;
   inset: 0 auto auto 0;
-  width: 393px;
-  height: 804px;
+  width: var(--screen-width);
+  height: var(--screen-height);
   overflow: visible;
   background: #ffffff;
   transform: scale(var(--fit-scale));
@@ -82,8 +84,8 @@ button {
 
 .screen-image {
   display: block;
-  width: 393px;
-  height: 804px;
+  width: var(--screen-width);
+  height: var(--screen-height);
   user-select: none;
 }
 

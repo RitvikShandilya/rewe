@@ -9,11 +9,33 @@ import matchLocationImage from './assets/match-location.png';
 import readyBasketCleanImage from './assets/ready-basket-clean.png';
 import readyBasketImage from './assets/ready-basket.png';
 
-type ScreenId = 'home' | 'match-location' | 'customize-basket' | 'ready-basket';
+type ScreenId = string;
 type PrototypeMode = 'browser' | 'pwa';
 
-const designWidth = 393;
-const designHeight = 804;
+const browserDesignWidth = 393;
+const browserDesignHeight = 804;
+const pwaDesignWidth = 393;
+const pwaDesignHeight = 852;
+
+const pwaScreenImages = [
+  new URL('./assets/pwa/screen-01.png', import.meta.url).href,
+  new URL('./assets/pwa/screen-02.png', import.meta.url).href,
+  new URL('./assets/pwa/screen-03.png', import.meta.url).href,
+  new URL('./assets/pwa/screen-04.png', import.meta.url).href,
+  new URL('./assets/pwa/screen-05.png', import.meta.url).href,
+  new URL('./assets/pwa/screen-06.png', import.meta.url).href,
+  new URL('./assets/pwa/screen-07.png', import.meta.url).href,
+  new URL('./assets/pwa/screen-08.png', import.meta.url).href,
+  new URL('./assets/pwa/screen-09.png', import.meta.url).href,
+  new URL('./assets/pwa/screen-10.png', import.meta.url).href,
+  new URL('./assets/pwa/screen-11.png', import.meta.url).href,
+  new URL('./assets/pwa/screen-12.png', import.meta.url).href,
+  new URL('./assets/pwa/screen-13.png', import.meta.url).href,
+  new URL('./assets/pwa/screen-14.png', import.meta.url).href,
+  new URL('./assets/pwa/screen-15.png', import.meta.url).href,
+  new URL('./assets/pwa/screen-16.png', import.meta.url).href,
+  new URL('./assets/pwa/screen-17.png', import.meta.url).href,
+];
 
 type Hotspot = {
   label: string;
@@ -210,12 +232,275 @@ const screens: Screen[] = [
   },
 ];
 
-const screenById = Object.fromEntries(screens.map((screen) => [screen.id, screen])) as Record<
-  ScreenId,
-  Screen
->;
+const pwaScreenId = (screenNumber: number) => `screen-${String(screenNumber).padStart(2, '0')}`;
+
+const pwaHotspots: Hotspot[][] = [
+  [
+    {
+      label: 'Open match day notification',
+      left: 20,
+      top: 625,
+      width: 353,
+      height: 72,
+      to: pwaScreenId(2),
+    },
+  ],
+  [
+    {
+      label: 'Open match day planner',
+      left: 23,
+      top: 193,
+      width: 347,
+      height: 304,
+      to: pwaScreenId(3),
+    },
+    {
+      label: 'Plan my match day',
+      left: 62,
+      top: 419,
+      width: 269,
+      height: 50,
+      to: pwaScreenId(3),
+    },
+  ],
+  [
+    {
+      label: 'Back to home',
+      left: 8,
+      top: 55,
+      width: 52,
+      height: 52,
+      to: pwaScreenId(2),
+    },
+    {
+      label: 'Continue',
+      left: 31,
+      top: 790,
+      width: 331,
+      height: 48,
+      to: pwaScreenId(4),
+    },
+  ],
+  [
+    {
+      label: 'Back to match location',
+      left: 8,
+      top: 55,
+      width: 52,
+      height: 52,
+      to: pwaScreenId(3),
+    },
+    {
+      label: 'Add to shopping list',
+      left: 31,
+      top: 790,
+      width: 331,
+      height: 48,
+      to: pwaScreenId(5),
+    },
+  ],
+  [
+    {
+      label: 'Back to match basket',
+      left: 8,
+      top: 55,
+      width: 52,
+      height: 52,
+      to: pwaScreenId(4),
+    },
+    {
+      label: 'Shop your way',
+      left: 31,
+      top: 790,
+      width: 331,
+      height: 48,
+      to: pwaScreenId(6),
+    },
+  ],
+  [
+    {
+      label: 'Back to ready basket',
+      left: 8,
+      top: 55,
+      width: 52,
+      height: 52,
+      to: pwaScreenId(5),
+    },
+    {
+      label: 'Continue',
+      left: 31,
+      top: 790,
+      width: 331,
+      height: 48,
+      to: pwaScreenId(7),
+    },
+  ],
+  [
+    {
+      label: 'I have arrived',
+      left: 31,
+      top: 753,
+      width: 331,
+      height: 48,
+      to: pwaScreenId(8),
+    },
+    {
+      label: 'Save for later',
+      left: 31,
+      top: 807,
+      width: 331,
+      height: 34,
+      to: pwaScreenId(8),
+    },
+  ],
+  [
+    {
+      label: 'Open REWE app',
+      left: 288,
+      top: 504,
+      width: 64,
+      height: 82,
+      to: pwaScreenId(9),
+    },
+  ],
+  [
+    {
+      label: 'Collect your items',
+      left: 20,
+      top: 141,
+      width: 353,
+      height: 155,
+      to: pwaScreenId(10),
+    },
+    {
+      label: 'Start shopping',
+      left: 31,
+      top: 253,
+      width: 331,
+      height: 48,
+      to: pwaScreenId(10),
+    },
+  ],
+  [
+    {
+      label: 'Back to collect items',
+      left: 8,
+      top: 55,
+      width: 52,
+      height: 52,
+      to: pwaScreenId(9),
+    },
+    {
+      label: 'Continue',
+      left: 31,
+      top: 790,
+      width: 331,
+      height: 48,
+      to: pwaScreenId(11),
+    },
+  ],
+  [
+    {
+      label: 'Spin and win',
+      left: 31,
+      top: 790,
+      width: 331,
+      height: 48,
+      to: pwaScreenId(12),
+    },
+  ],
+  [
+    {
+      label: 'Add snack to basket',
+      left: 31,
+      top: 608,
+      width: 331,
+      height: 48,
+      to: pwaScreenId(13),
+    },
+    {
+      label: 'Skip snack',
+      left: 31,
+      top: 665,
+      width: 331,
+      height: 44,
+      to: pwaScreenId(13),
+    },
+  ],
+  [
+    {
+      label: 'Back to fortune wheel result',
+      left: 8,
+      top: 55,
+      width: 52,
+      height: 52,
+      to: pwaScreenId(12),
+    },
+    {
+      label: 'Continue to checkout',
+      left: 31,
+      top: 790,
+      width: 331,
+      height: 48,
+      to: pwaScreenId(14),
+    },
+  ],
+  [
+    {
+      label: 'Back to explore mode',
+      left: 8,
+      top: 55,
+      width: 52,
+      height: 52,
+      to: pwaScreenId(13),
+    },
+    {
+      label: 'Checkout',
+      left: 31,
+      top: 789,
+      width: 331,
+      height: 48,
+      to: pwaScreenId(15),
+    },
+  ],
+  [
+    {
+      label: 'Finish shopping',
+      left: 0,
+      top: 692,
+      width: 393,
+      height: 160,
+      to: pwaScreenId(16),
+    },
+  ],
+  [
+    {
+      label: 'Open team notification',
+      left: 20,
+      top: 625,
+      width: 353,
+      height: 72,
+      to: pwaScreenId(17),
+    },
+  ],
+  [],
+];
+
+const pwaScreens: Screen[] = pwaScreenImages.map((image, index) => ({
+  id: pwaScreenId(index + 1),
+  title: `Screen ${String(index + 1).padStart(2, '0')}`,
+  image,
+  hotspots: pwaHotspots[index] ?? [],
+}));
+
 const preloadImageSources = Array.from(
-  new Set(screens.flatMap((screen) => [screen.image, screen.cleanImage]).concat(homeNavPill).filter(Boolean)),
+  new Set(
+    screens
+      .concat(pwaScreens)
+      .flatMap((screen) => [screen.image, screen.cleanImage])
+      .concat(homeNavPill)
+      .filter(Boolean),
+  ),
 ) as string[];
 
 function getPrototypeMode(): PrototypeMode {
@@ -372,14 +657,14 @@ function ViewportDebugOverlay() {
   );
 }
 
-function getPreviousScreen(id: ScreenId): ScreenId {
-  const index = screens.findIndex((screen) => screen.id === id);
-  return screens[Math.max(index - 1, 0)].id;
+function getPreviousScreen(id: ScreenId, activeScreens: Screen[]): ScreenId {
+  const index = activeScreens.findIndex((screen) => screen.id === id);
+  return activeScreens[Math.max(index - 1, 0)]?.id ?? activeScreens[0].id;
 }
 
-function getNextScreen(id: ScreenId): ScreenId {
-  const index = screens.findIndex((screen) => screen.id === id);
-  return screens[Math.min(index + 1, screens.length - 1)].id;
+function getNextScreen(id: ScreenId, activeScreens: Screen[]): ScreenId {
+  const index = activeScreens.findIndex((screen) => screen.id === id);
+  return activeScreens[Math.min(index + 1, activeScreens.length - 1)]?.id ?? activeScreens[0].id;
 }
 
 function BottomNavigation() {
@@ -421,13 +706,20 @@ function FixedCta({ label, onClick }: { label: string; onClick: () => void }) {
 
 function Prototype({ mode }: { mode: PrototypeMode }) {
   const isPwaMode = mode === 'pwa';
-  const [screenId, setScreenId] = useState<ScreenId>('home');
+  const activeScreens = isPwaMode ? pwaScreens : screens;
+  const activeDesignWidth = isPwaMode ? pwaDesignWidth : browserDesignWidth;
+  const activeDesignHeight = isPwaMode ? pwaDesignHeight : browserDesignHeight;
+  const [screenId, setScreenId] = useState<ScreenId>(() => activeScreens[0].id);
   const [fixedControlNeeded, setFixedControlNeeded] = useState(!isPwaMode);
   const [viewportDebugEnabled] = useState(() => {
     const params = new URLSearchParams(window.location.search);
     return params.has('vp') || params.get('debug') === 'viewport';
   });
-  const screen = screenById[screenId];
+  const screenById = useMemo(
+    () => Object.fromEntries(activeScreens.map((item) => [item.id, item])) as Record<ScreenId, Screen>,
+    [activeScreens],
+  );
+  const screen = screenById[screenId] ?? activeScreens[0];
 
   const navigate = useCallback((nextScreenId?: ScreenId) => {
     if (nextScreenId) {
@@ -436,14 +728,18 @@ function Prototype({ mode }: { mode: PrototypeMode }) {
   }, []);
 
   const activeIndex = useMemo(
-    () => screens.findIndex((item) => item.id === screenId),
-    [screenId],
+    () => activeScreens.findIndex((item) => item.id === screen.id),
+    [activeScreens, screen.id],
   );
   const visibleImage = isPwaMode
     ? screen.image
     : screen.fixedControl && fixedControlNeeded && screen.cleanImage
       ? screen.cleanImage
       : screen.image;
+
+  useEffect(() => {
+    setScreenId(activeScreens[0].id);
+  }, [activeScreens]);
 
   useEffect(() => {
     document.body.dataset.prototypeMode = mode;
@@ -455,17 +751,17 @@ function Prototype({ mode }: { mode: PrototypeMode }) {
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'ArrowLeft') {
-        setScreenId((current) => getPreviousScreen(current));
+        setScreenId((current) => getPreviousScreen(current, activeScreens));
       }
 
       if (event.key === 'ArrowRight') {
-        setScreenId((current) => getNextScreen(current));
+        setScreenId((current) => getNextScreen(current, activeScreens));
       }
     };
 
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, []);
+  }, [activeScreens]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -477,21 +773,23 @@ function Prototype({ mode }: { mode: PrototypeMode }) {
       const width = viewport?.width ?? window.innerWidth;
       const height = viewport?.height ?? window.innerHeight;
       const scale = isPwaMode
-        ? Math.max(width / designWidth, 1) * 1.006
-        : Math.min(width / designWidth, 1);
+        ? Math.max(width / activeDesignWidth, 1) * 1.006
+        : Math.min(width / activeDesignWidth, 1);
 
       document.documentElement.style.setProperty('--visible-width', `${width}px`);
       document.documentElement.style.setProperty('--visible-height', `${height}px`);
       document.documentElement.style.setProperty('--fit-scale', `${scale}`);
+      document.documentElement.style.setProperty('--screen-width', `${activeDesignWidth}px`);
+      document.documentElement.style.setProperty('--screen-height', `${activeDesignHeight}px`);
       document.documentElement.style.setProperty(
         '--frame-width',
-        `${isPwaMode ? width : designWidth * scale}px`,
+        `${isPwaMode ? width : activeDesignWidth * scale}px`,
       );
       document.documentElement.style.setProperty(
         '--frame-height',
-        `${isPwaMode ? height : designHeight * scale}px`,
+        `${isPwaMode ? height : activeDesignHeight * scale}px`,
       );
-      setFixedControlNeeded(!isPwaMode && height < designHeight * scale);
+      setFixedControlNeeded(!isPwaMode && height < browserDesignHeight * scale);
     };
 
     updateViewportSize();
@@ -507,7 +805,7 @@ function Prototype({ mode }: { mode: PrototypeMode }) {
       window.removeEventListener('resize', updateViewportSize);
       window.removeEventListener('orientationchange', updateViewportSize);
     };
-  }, [isPwaMode]);
+  }, [activeDesignHeight, activeDesignWidth, isPwaMode]);
 
   return (
     <main className={`prototype-stage prototype-stage--${mode}`} aria-label="REWE loyalty click prototype">
@@ -545,7 +843,7 @@ function Prototype({ mode }: { mode: PrototypeMode }) {
       ) : null}
 
       <div className="step-dots" aria-hidden="true">
-        {screens.map((item, index) => (
+        {activeScreens.map((item, index) => (
           <span className={index === activeIndex ? 'active' : ''} key={item.id} />
         ))}
       </div>
