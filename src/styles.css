@@ -33,6 +33,11 @@ body {
   -webkit-overflow-scrolling: touch;
 }
 
+body[data-prototype-mode="pwa"] {
+  overflow: hidden;
+  background: #ffffff;
+}
+
 button {
   font: inherit;
 }
@@ -46,6 +51,15 @@ button {
   place-items: start center;
   background: #e4e4e4;
   padding: 0 0 max(24px, env(safe-area-inset-bottom));
+}
+
+.prototype-stage--pwa {
+  height: var(--visible-height);
+  min-height: var(--visible-height);
+  overflow: hidden;
+  place-items: start center;
+  background: #ffffff;
+  padding: 0;
 }
 
 .phone-frame {
@@ -71,6 +85,11 @@ button {
   width: 393px;
   height: 804px;
   user-select: none;
+}
+
+.prototype-stage--pwa .phone-frame,
+.prototype-stage--pwa .phone-shell {
+  overflow: hidden;
 }
 
 .fixed-control-layer {

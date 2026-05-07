@@ -10,6 +10,10 @@ import readyBasketCleanImage from './assets/ready-basket-clean.png';
 import readyBasketImage from './assets/ready-basket.png';
 
 type ScreenId = 'home' | 'match-location' | 'customize-basket' | 'ready-basket';
+type PrototypeMode = 'browser' | 'pwa';
+
+const designWidth = 393;
+const designHeight = 804;
 
 type Hotspot = {
   label: string;
@@ -211,8 +215,13 @@ const screenById = Object.fromEntries(screens.map((screen) => [screen.id, screen
   Screen
 >;
 const preloadImageSources = Array.from(
-  new Set(screens.flatMap((screen) => [screen.image, screen.cleanImage]).filter(Boolean)),
+  new Set(screens.flatMap((screen) => [screen.image, screen.cleanImage]).concat(homeNavPill).filter(Boolean)),
 ) as string[];
+
+function getPrototypeMode(): PrototypeMode {
+  const path = window.location.pathname.replace(/\/+$/, '');
+  return path.endsWith('/pwa') ? 'pwa' : 'browser';
+}
 
 function rounded(value: number | undefined): number {
   return Math.round((value ?? 0) * 100) / 100;
@@ -410,9 +419,10 @@ function FixedCta({ label, onClick }: { label: string; onClick: () => void }) {
   );
 }
 
-export function App() {
+function Prototype({ mode }: { mode: PrototypeMode }) {
+  const isPwaMode = mode === 'pwa';
   const [screenId, setScreenId] = useState<ScreenId>('home');
-  const [fixedControlNeeded, setFixedControlNeeded] = useState(true);
+  const [fixedControlNeeded, setFixedControlNeeded] = useState(!isPwaMode);
   const [viewportDebugEnabled] = useState(() => {
     const params = new URLSearchParams(window.location.search);
     return params.has('vp') || params.get('debug') === 'viewport';
@@ -429,8 +439,18 @@ export function App() {
     () => screens.findIndex((item) => item.id === screenId),
     [screenId],
   );
-  const visibleImage =
-    screen.fixedControl && fixedControlNeeded && screen.cleanImage ? screen.cleanImage : screen.image;
+  const visibleImage = isPwaMode
+    ? screen.image
+    : screen.fixedControl && fixedControlNeeded && screen.cleanImage
+      ? screen.cleanImage
+      : screen.image;
+
+  useEffect(() => {
+    document.body.dataset.prototypeMode = mode;
+    return () => {
+      delete document.body.dataset.prototypeMode;
+    };
+  }, [mode]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -456,14 +476,16 @@ export function App() {
       const viewport = window.visualViewport;
       const width = viewport?.width ?? window.innerWidth;
       const height = viewport?.height ?? window.innerHeight;
-      const scale = Math.min(width / 393, 1);
+      const scale = isPwaMode
+        ? Math.min(width / designWidth, height / designHeight, 1)
+        : Math.min(width / designWidth, 1);
 
       document.documentElement.style.setProperty('--visible-width', `${width}px`);
       document.documentElement.style.setProperty('--visible-height', `${height}px`);
       document.documentElement.style.setProperty('--fit-scale', `${scale}`);
-      document.documentElement.style.setProperty('--frame-width', `${393 * scale}px`);
-      document.documentElement.style.setProperty('--frame-height', `${804 * scale}px`);
-      setFixedControlNeeded(height < 804 * scale);
+      document.documentElement.style.setProperty('--frame-width', `${designWidth * scale}px`);
+      document.documentElement.style.setProperty('--frame-height', `${designHeight * scale}px`);
+      setFixedControlNeeded(!isPwaMode && height < designHeight * scale);
     };
 
     updateViewportSize();
@@ -479,10 +501,10 @@ export function App() {
       window.removeEventListener('resize', updateViewportSize);
       window.removeEventListener('orientationchange', updateViewportSize);
     };
-  }, []);
+  }, [isPwaMode]);
 
   return (
-    <main className="prototype-stage" aria-label="REWE loyalty click prototype">
+    <main className={`prototype-stage prototype-stage--${mode}`} aria-label="REWE loyalty click prototype">
       <div className="phone-frame">
         <div className="phone-shell" aria-live="polite">
           <img className="screen-image" src={visibleImage} alt={screen.title} draggable={false} />
@@ -505,9 +527,11 @@ export function App() {
         </div>
       </div>
 
-      {screen.fixedControl?.kind === 'navigation' && fixedControlNeeded ? <BottomNavigation /> : null}
+      {!isPwaMode && screen.fixedControl?.kind === 'navigation' && fixedControlNeeded ? (
+        <BottomNavigation />
+      ) : null}
 
-      {screen.fixedControl?.kind === 'cta' && fixedControlNeeded ? (
+      {!isPwaMode && screen.fixedControl?.kind === 'cta' && fixedControlNeeded ? (
         <FixedCta
           label={screen.fixedControl.label}
           onClick={() => navigate(screen.fixedControl?.kind === 'cta' ? screen.fixedControl.to : undefined)}
@@ -529,4 +553,8 @@ export function App() {
       {viewportDebugEnabled ? <ViewportDebugOverlay /> : null}
     </main>
   );
+}
+
+export function App() {
+  return <Prototype mode={getPrototypeMode()} />;
 }
