@@ -477,14 +477,20 @@ function Prototype({ mode }: { mode: PrototypeMode }) {
       const width = viewport?.width ?? window.innerWidth;
       const height = viewport?.height ?? window.innerHeight;
       const scale = isPwaMode
-        ? Math.min(width / designWidth, height / designHeight, 1)
+        ? Math.max(width / designWidth, 1) * 1.006
         : Math.min(width / designWidth, 1);
 
       document.documentElement.style.setProperty('--visible-width', `${width}px`);
       document.documentElement.style.setProperty('--visible-height', `${height}px`);
       document.documentElement.style.setProperty('--fit-scale', `${scale}`);
-      document.documentElement.style.setProperty('--frame-width', `${designWidth * scale}px`);
-      document.documentElement.style.setProperty('--frame-height', `${designHeight * scale}px`);
+      document.documentElement.style.setProperty(
+        '--frame-width',
+        `${isPwaMode ? width : designWidth * scale}px`,
+      );
+      document.documentElement.style.setProperty(
+        '--frame-height',
+        `${isPwaMode ? height : designHeight * scale}px`,
+      );
       setFixedControlNeeded(!isPwaMode && height < designHeight * scale);
     };
 

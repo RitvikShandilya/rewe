@@ -92,6 +92,12 @@ button {
   overflow: hidden;
 }
 
+.prototype-stage--pwa .phone-shell {
+  left: 50%;
+  transform: translateX(-50%) scale(var(--fit-scale));
+  transform-origin: top center;
+}
+
 .fixed-control-layer {
   position: fixed;
   z-index: 5;
