@@ -3,7 +3,7 @@ import customizeBasketCleanImage from './assets/customize-basket-clean.png';
 import customizeBasketImage from './assets/customize-basket.png';
 import homeImage from './assets/home.png';
 import homeCleanImage from './assets/home-clean.png';
-import homeNavArtwork from './assets/home-nav-artwork.png';
+import homeNavPill from './assets/home-nav-pill.png';
 import matchLocationCleanImage from './assets/match-location-clean.png';
 import matchLocationImage from './assets/match-location.png';
 import readyBasketCleanImage from './assets/ready-basket-clean.png';
@@ -385,7 +385,7 @@ function BottomNavigation() {
   return (
     <div className="fixed-control-layer fixed-navigation-layer">
       <nav className="bottom-navigation" aria-label="Primary">
-        <img className="bottom-navigation-artwork" src={homeNavArtwork} alt="" draggable={false} />
+        <img className="bottom-navigation-image" src={homeNavPill} alt="" draggable={false} />
         {items.map((item) => (
           <button
             className="bottom-navigation-hit"
