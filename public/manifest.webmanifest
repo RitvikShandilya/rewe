@@ -1,7 +1,7 @@
 {
   "name": "REWE Loyalty Prototype",
   "short_name": "REWE",
-  "start_url": "/rewe/pwa",
+  "start_url": "/rewe/pwa/",
   "scope": "/rewe/",
   "display": "standalone",
   "background_color": "#ffffff",
