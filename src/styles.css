@@ -9,6 +9,7 @@
   --frame-height: 804px;
   --screen-width: 393px;
   --screen-height: 804px;
+  --pwa-stage-image: none;
   background: #e4e4e4;
   -webkit-font-smoothing: antialiased;
   text-rendering: geometricPrecision;
@@ -38,6 +39,10 @@ body {
 body[data-prototype-mode="pwa"] {
   overflow: hidden;
   background: #ffffff;
+  background-image: var(--pwa-stage-image);
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: var(--frame-width) var(--frame-height);
 }
 
 button {
@@ -61,6 +66,10 @@ button {
   overflow: hidden;
   place-items: start center;
   background: #ffffff;
+  background-image: var(--pwa-stage-image);
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: var(--frame-width) var(--frame-height);
   padding: 0;
 }
 

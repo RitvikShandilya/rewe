@@ -764,6 +764,19 @@ function Prototype({ mode }: { mode: PrototypeMode }) {
   }, [mode]);
 
   useEffect(() => {
+    if (!isPwaMode) {
+      document.documentElement.style.removeProperty('--pwa-stage-image');
+      return;
+    }
+
+    document.documentElement.style.setProperty('--pwa-stage-image', `url("${visibleImage}")`);
+
+    return () => {
+      document.documentElement.style.removeProperty('--pwa-stage-image');
+    };
+  }, [isPwaMode, visibleImage]);
+
+  useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'ArrowLeft') {
         setScreenId((current) => getPreviousScreen(current, activeScreens));
