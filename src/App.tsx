@@ -1,7 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import customizeBasketCleanImage from './assets/customize-basket-clean.png';
 import customizeBasketImage from './assets/customize-basket.png';
 import homeImage from './assets/home.png';
+import homeCleanImage from './assets/home-clean.png';
+import homeNavForeground from './assets/home-nav-foreground.png';
+import matchLocationCleanImage from './assets/match-location-clean.png';
 import matchLocationImage from './assets/match-location.png';
+import readyBasketCleanImage from './assets/ready-basket-clean.png';
 import readyBasketImage from './assets/ready-basket.png';
 
 type ScreenId = 'home' | 'match-location' | 'customize-basket' | 'ready-basket';
@@ -19,8 +24,20 @@ type Screen = {
   id: ScreenId;
   title: string;
   image: string;
+  cleanImage?: string;
+  fixedControl?: FixedControl;
   hotspots: Hotspot[];
 };
+
+type FixedControl =
+  | {
+      kind: 'navigation';
+    }
+  | {
+      kind: 'cta';
+      label: string;
+      to?: ScreenId;
+    };
 
 type ViewportDebugInfo = {
   browser: string;
@@ -65,6 +82,10 @@ const screens: Screen[] = [
     id: 'home',
     title: 'Home',
     image: homeImage,
+    cleanImage: homeCleanImage,
+    fixedControl: {
+      kind: 'navigation',
+    },
     hotspots: [
       {
         label: 'Open match day card',
@@ -88,6 +109,12 @@ const screens: Screen[] = [
     id: 'match-location',
     title: 'Match location',
     image: matchLocationImage,
+    cleanImage: matchLocationCleanImage,
+    fixedControl: {
+      kind: 'cta',
+      label: 'Continue',
+      to: 'customize-basket',
+    },
     hotspots: [
       {
         label: 'Back to home',
@@ -125,6 +152,12 @@ const screens: Screen[] = [
     id: 'customize-basket',
     title: 'Customize basket',
     image: customizeBasketImage,
+    cleanImage: customizeBasketCleanImage,
+    fixedControl: {
+      kind: 'cta',
+      label: 'Add to shopping list',
+      to: 'ready-basket',
+    },
     hotspots: [
       {
         label: 'Back to match location',
@@ -148,6 +181,11 @@ const screens: Screen[] = [
     id: 'ready-basket',
     title: 'Ready basket',
     image: readyBasketImage,
+    cleanImage: readyBasketCleanImage,
+    fixedControl: {
+      kind: 'cta',
+      label: 'shop your way',
+    },
     hotspots: [
       {
         label: 'Back to customize basket',
@@ -172,7 +210,9 @@ const screenById = Object.fromEntries(screens.map((screen) => [screen.id, screen
   ScreenId,
   Screen
 >;
-const preloadImageSources = Array.from(new Set(screens.map((screen) => screen.image)));
+const preloadImageSources = Array.from(
+  new Set(screens.flatMap((screen) => [screen.image, screen.cleanImage]).filter(Boolean)),
+) as string[];
 
 function rounded(value: number | undefined): number {
   return Math.round((value ?? 0) * 100) / 100;
@@ -333,8 +373,46 @@ function getNextScreen(id: ScreenId): ScreenId {
   return screens[Math.min(index + 1, screens.length - 1)].id;
 }
 
+function BottomNavigation() {
+  const items = [
+    { label: 'Start', left: 6, width: 83 },
+    { label: 'Angebote', left: 89, width: 66 },
+    { label: 'Bonus', left: 166, width: 58 },
+    { label: 'Bestellen', left: 236, width: 64 },
+    { label: 'Rezepte', left: 301, width: 46 },
+  ];
+
+  return (
+    <div className="fixed-control-layer fixed-navigation-layer">
+      <nav className="bottom-navigation" aria-label="Primary">
+        <img className="bottom-navigation-foreground" src={homeNavForeground} alt="" draggable={false} />
+        {items.map((item) => (
+          <button
+            className="bottom-navigation-hit"
+            key={item.label}
+            type="button"
+            aria-label={item.label}
+            style={{ left: `${item.left}px`, width: `${item.width}px` }}
+          />
+        ))}
+      </nav>
+    </div>
+  );
+}
+
+function FixedCta({ label, onClick }: { label: string; onClick: () => void }) {
+  return (
+    <div className="fixed-control-layer fixed-cta-layer">
+      <button className="fixed-cta" type="button" aria-label={label} onClick={onClick}>
+        {label}
+      </button>
+    </div>
+  );
+}
+
 export function App() {
   const [screenId, setScreenId] = useState<ScreenId>('home');
+  const [fixedControlNeeded, setFixedControlNeeded] = useState(true);
   const [viewportDebugEnabled] = useState(() => {
     const params = new URLSearchParams(window.location.search);
     return params.has('vp') || params.get('debug') === 'viewport';
@@ -351,6 +429,8 @@ export function App() {
     () => screens.findIndex((item) => item.id === screenId),
     [screenId],
   );
+  const visibleImage =
+    screen.fixedControl && fixedControlNeeded && screen.cleanImage ? screen.cleanImage : screen.image;
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -383,6 +463,7 @@ export function App() {
       document.documentElement.style.setProperty('--fit-scale', `${scale}`);
       document.documentElement.style.setProperty('--frame-width', `${393 * scale}px`);
       document.documentElement.style.setProperty('--frame-height', `${804 * scale}px`);
+      setFixedControlNeeded(height < 804 * scale);
     };
 
     updateViewportSize();
@@ -404,7 +485,7 @@ export function App() {
     <main className="prototype-stage" aria-label="REWE loyalty click prototype">
       <div className="phone-frame">
         <div className="phone-shell" aria-live="polite">
-          <img className="screen-image" src={screen.image} alt={screen.title} draggable={false} />
+          <img className="screen-image" src={visibleImage} alt={screen.title} draggable={false} />
 
           {screen.hotspots.map((hotspot) => (
             <button
@@ -423,6 +504,15 @@ export function App() {
           ))}
         </div>
       </div>
+
+      {screen.fixedControl?.kind === 'navigation' && fixedControlNeeded ? <BottomNavigation /> : null}
+
+      {screen.fixedControl?.kind === 'cta' && fixedControlNeeded ? (
+        <FixedCta
+          label={screen.fixedControl.label}
+          onClick={() => navigate(screen.fixedControl?.kind === 'cta' ? screen.fixedControl.to : undefined)}
+        />
+      ) : null}
 
       <div className="step-dots" aria-hidden="true">
         {screens.map((item, index) => (
