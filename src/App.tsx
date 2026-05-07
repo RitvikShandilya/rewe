@@ -172,6 +172,9 @@ const screenById = Object.fromEntries(screens.map((screen) => [screen.id, screen
   ScreenId,
   Screen
 >;
+const preloadImageSources = Array.from(
+  new Set(screens.flatMap((screen) => [screen.image, screen.cleanImage]).filter(Boolean)),
+) as string[];
 
 function getPreviousScreen(id: ScreenId): ScreenId {
   const index = screens.findIndex((screen) => screen.id === id);
@@ -327,8 +330,8 @@ export function App() {
       </div>
 
       <div className="preload-images" aria-hidden="true">
-        {screens.map((item) => (
-          <img alt="" key={item.id} src={item.image} />
+        {preloadImageSources.map((src) => (
+          <img alt="" key={src} src={src} />
         ))}
       </div>
     </main>
