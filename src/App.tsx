@@ -1,8 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import homeImage from './assets/home.png';
-import homeNavForeground from './assets/home-nav-foreground.png';
-import matchLocationImage from './assets/match-location.png';
+import customizeBasketCleanImage from './assets/customize-basket-clean.png';
 import customizeBasketImage from './assets/customize-basket.png';
+import homeImage from './assets/home.png';
+import homeCleanImage from './assets/home-clean.png';
+import homeNavForeground from './assets/home-nav-foreground.png';
+import matchLocationCleanImage from './assets/match-location-clean.png';
+import matchLocationImage from './assets/match-location.png';
+import readyBasketCleanImage from './assets/ready-basket-clean.png';
 import readyBasketImage from './assets/ready-basket.png';
 
 type ScreenId = 'home' | 'match-location' | 'customize-basket' | 'ready-basket';
@@ -20,6 +24,7 @@ type Screen = {
   id: ScreenId;
   title: string;
   image: string;
+  cleanImage?: string;
   fixedControl?: FixedControl;
   hotspots: Hotspot[];
 };
@@ -39,6 +44,7 @@ const screens: Screen[] = [
     id: 'home',
     title: 'Home',
     image: homeImage,
+    cleanImage: homeCleanImage,
     fixedControl: {
       kind: 'navigation',
     },
@@ -65,6 +71,7 @@ const screens: Screen[] = [
     id: 'match-location',
     title: 'Match location',
     image: matchLocationImage,
+    cleanImage: matchLocationCleanImage,
     fixedControl: {
       kind: 'cta',
       label: 'Continue',
@@ -107,6 +114,7 @@ const screens: Screen[] = [
     id: 'customize-basket',
     title: 'Customize basket',
     image: customizeBasketImage,
+    cleanImage: customizeBasketCleanImage,
     fixedControl: {
       kind: 'cta',
       label: 'Add to shopping list',
@@ -135,6 +143,7 @@ const screens: Screen[] = [
     id: 'ready-basket',
     title: 'Ready basket',
     image: readyBasketImage,
+    cleanImage: readyBasketCleanImage,
     fixedControl: {
       kind: 'cta',
       label: 'shop your way',
@@ -186,7 +195,6 @@ function BottomNavigation() {
   return (
     <div className="fixed-control-layer fixed-navigation-layer">
       <nav className="bottom-navigation" aria-label="Primary">
-        <span className="bottom-navigation-active" aria-hidden="true" />
         <img className="bottom-navigation-foreground" src={homeNavForeground} alt="" draggable={false} />
         {items.map((item) => (
           <button
@@ -227,6 +235,8 @@ export function App() {
     () => screens.findIndex((item) => item.id === screenId),
     [screenId],
   );
+  const visibleImage =
+    screen.fixedControl && fixedControlNeeded && screen.cleanImage ? screen.cleanImage : screen.image;
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -281,7 +291,7 @@ export function App() {
     <main className="prototype-stage" aria-label="REWE loyalty click prototype">
       <div className="phone-frame">
         <div className="phone-shell" aria-live="polite">
-          <img className="screen-image" src={screen.image} alt={screen.title} draggable={false} />
+          <img className="screen-image" src={visibleImage} alt={screen.title} draggable={false} />
 
           {screen.hotspots.map((hotspot) => (
             <button
