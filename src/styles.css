@@ -3,6 +3,7 @@
   font-family:
     Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --visible-width: 100vw;
+  --visible-height: 100svh;
   --fit-scale: 1;
   --frame-width: 393px;
   --frame-height: 804px;
@@ -20,14 +21,14 @@ body,
 #root {
   width: 100%;
   min-width: 320px;
-  min-height: 100%;
+  height: 100%;
   margin: 0;
 }
 
 body {
   background: #e4e4e4;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden;
+  overscroll-behavior: none;
 }
 
 button {
@@ -37,9 +38,8 @@ button {
 .prototype-stage {
   display: grid;
   width: 100%;
-  min-height: 100svh;
-  overflow-x: hidden;
-  overflow-y: visible;
+  height: var(--visible-height);
+  overflow: hidden;
   place-items: start center;
   background: #e4e4e4;
   padding: 0;
@@ -70,34 +70,98 @@ button {
   user-select: none;
 }
 
-.screen-dock {
+.fixed-control-layer {
   position: fixed;
   z-index: 5;
   bottom: 0;
   left: 50%;
   width: 393px;
-  height: var(--dock-height);
   margin-left: -196.5px;
-  overflow: hidden;
-  background: #ffffff;
   pointer-events: none;
   transform: scale(var(--fit-scale));
   transform-origin: bottom center;
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000000 10px, #000000 100%);
-  mask-image: linear-gradient(to bottom, transparent 0, #000000 10px, #000000 100%);
 }
 
-.screen-dock-image {
+.fixed-navigation-layer {
+  height: 112px;
+}
+
+.bottom-navigation {
   position: absolute;
-  left: 0;
-  display: block;
-  width: 393px;
-  height: 804px;
-  user-select: none;
-  pointer-events: none;
+  left: 20px;
+  right: 20px;
+  bottom: 22px;
+  height: 88px;
+  overflow: hidden;
+  pointer-events: auto;
+  background: linear-gradient(180deg, rgb(255 255 255 / 88%), rgb(255 255 255 / 72%));
+  border: 1px solid rgb(255 255 255 / 72%);
+  border-radius: 999px;
+  box-shadow:
+    0 14px 30px rgb(0 0 0 / 16%),
+    inset 0 1px 0 rgb(255 255 255 / 80%),
+    inset 0 -10px 22px rgb(255 255 255 / 34%);
+  -webkit-backdrop-filter: blur(22px) saturate(1.2);
+  backdrop-filter: blur(22px) saturate(1.2);
 }
 
-.screen-dock .hotspot {
+.bottom-navigation-active {
+  position: absolute;
+  left: 6px;
+  top: 6px;
+  width: 83px;
+  height: 82px;
+  border-radius: 999px;
+  background: #ebe7e5;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 70%);
+}
+
+.bottom-navigation-foreground {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 353px;
+  height: 88px;
+  pointer-events: none;
+  user-select: none;
+}
+
+.bottom-navigation-hit {
+  position: absolute;
+  top: 0;
+  height: 88px;
+  padding: 0;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  appearance: none;
+}
+
+.fixed-cta-layer {
+  height: 110px;
+}
+
+.fixed-cta {
+  position: absolute;
+  left: 28px;
+  bottom: 31px;
+  width: 337px;
+  height: 48px;
+  padding: 0 20px;
+  overflow: hidden;
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 850;
+  line-height: 1;
+  letter-spacing: 0;
+  text-align: center;
+  white-space: nowrap;
+  cursor: pointer;
+  background: #f90068;
+  border: 0;
+  border-radius: 14px;
+  box-shadow: 0 8px 20px rgb(110 0 46 / 14%);
+  appearance: none;
   pointer-events: auto;
 }
 
