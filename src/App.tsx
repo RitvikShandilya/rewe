@@ -39,6 +39,44 @@ type FixedControl =
       to?: ScreenId;
     };
 
+type ViewportDebugInfo = {
+  browser: string;
+  dpr: number;
+  visual: {
+    width: number;
+    height: number;
+    offsetTop: number;
+    pageTop: number;
+  };
+  inner: {
+    width: number;
+    height: number;
+  };
+  documentElement: {
+    clientWidth: number;
+    clientHeight: number;
+    scrollWidth: number;
+    scrollHeight: number;
+  };
+  screen: {
+    width: number;
+    height: number;
+    availWidth: number;
+    availHeight: number;
+  };
+  cssViewportUnits: {
+    svh: number;
+    dvh: number;
+    lvh: number;
+  };
+  safeArea: {
+    top: number;
+    right: number;
+    bottom: number;
+    left: number;
+  };
+};
+
 const screens: Screen[] = [
   {
     id: 'home',
@@ -176,6 +214,155 @@ const preloadImageSources = Array.from(
   new Set(screens.flatMap((screen) => [screen.image, screen.cleanImage]).filter(Boolean)),
 ) as string[];
 
+function rounded(value: number | undefined): number {
+  return Math.round((value ?? 0) * 100) / 100;
+}
+
+function measureCssHeight(unit: 'svh' | 'dvh' | 'lvh'): number {
+  const probe = document.createElement('div');
+  probe.style.position = 'fixed';
+  probe.style.left = '-1px';
+  probe.style.top = '0';
+  probe.style.width = '1px';
+  probe.style.height = `100${unit}`;
+  probe.style.pointerEvents = 'none';
+  probe.style.visibility = 'hidden';
+  document.body.appendChild(probe);
+  const height = probe.getBoundingClientRect().height;
+  probe.remove();
+  return rounded(height);
+}
+
+function measureSafeArea(): ViewportDebugInfo['safeArea'] {
+  const probe = document.createElement('div');
+  probe.style.position = 'fixed';
+  probe.style.inset = '0';
+  probe.style.paddingTop = 'env(safe-area-inset-top)';
+  probe.style.paddingRight = 'env(safe-area-inset-right)';
+  probe.style.paddingBottom = 'env(safe-area-inset-bottom)';
+  probe.style.paddingLeft = 'env(safe-area-inset-left)';
+  probe.style.pointerEvents = 'none';
+  probe.style.visibility = 'hidden';
+  document.body.appendChild(probe);
+  const styles = window.getComputedStyle(probe);
+  const safeArea = {
+    top: rounded(parseFloat(styles.paddingTop)),
+    right: rounded(parseFloat(styles.paddingRight)),
+    bottom: rounded(parseFloat(styles.paddingBottom)),
+    left: rounded(parseFloat(styles.paddingLeft)),
+  };
+  probe.remove();
+  return safeArea;
+}
+
+function getBrowserLabel(): string {
+  const userAgent = navigator.userAgent;
+
+  if (/CriOS/i.test(userAgent)) {
+    return 'Chrome iOS';
+  }
+
+  if (/FxiOS/i.test(userAgent)) {
+    return 'Firefox iOS';
+  }
+
+  if (/EdgiOS/i.test(userAgent)) {
+    return 'Edge iOS';
+  }
+
+  if (/Chrome|Chromium|CriOS/i.test(userAgent)) {
+    return 'Chrome';
+  }
+
+  if (/Safari/i.test(userAgent)) {
+    return 'Safari';
+  }
+
+  return 'Unknown browser';
+}
+
+function getViewportDebugInfo(): ViewportDebugInfo {
+  const viewport = window.visualViewport;
+
+  return {
+    browser: getBrowserLabel(),
+    dpr: rounded(window.devicePixelRatio),
+    visual: {
+      width: rounded(viewport?.width ?? window.innerWidth),
+      height: rounded(viewport?.height ?? window.innerHeight),
+      offsetTop: rounded(viewport?.offsetTop ?? 0),
+      pageTop: rounded(viewport?.pageTop ?? window.scrollY),
+    },
+    inner: {
+      width: rounded(window.innerWidth),
+      height: rounded(window.innerHeight),
+    },
+    documentElement: {
+      clientWidth: document.documentElement.clientWidth,
+      clientHeight: document.documentElement.clientHeight,
+      scrollWidth: document.documentElement.scrollWidth,
+      scrollHeight: document.documentElement.scrollHeight,
+    },
+    screen: {
+      width: window.screen.width,
+      height: window.screen.height,
+      availWidth: window.screen.availWidth,
+      availHeight: window.screen.availHeight,
+    },
+    cssViewportUnits: {
+      svh: measureCssHeight('svh'),
+      dvh: measureCssHeight('dvh'),
+      lvh: measureCssHeight('lvh'),
+    },
+    safeArea: measureSafeArea(),
+  };
+}
+
+function ViewportDebugOverlay() {
+  const [info, setInfo] = useState<ViewportDebugInfo>(() => getViewportDebugInfo());
+
+  useEffect(() => {
+    const update = () => setInfo(getViewportDebugInfo());
+
+    update();
+    const interval = window.setInterval(update, 500);
+    window.visualViewport?.addEventListener('resize', update);
+    window.visualViewport?.addEventListener('scroll', update);
+    window.addEventListener('resize', update);
+    window.addEventListener('orientationchange', update);
+
+    return () => {
+      window.clearInterval(interval);
+      window.visualViewport?.removeEventListener('resize', update);
+      window.visualViewport?.removeEventListener('scroll', update);
+      window.removeEventListener('resize', update);
+      window.removeEventListener('orientationchange', update);
+    };
+  }, []);
+
+  return (
+    <div className="viewport-debug" aria-label="Viewport diagnostics">
+      <div className="viewport-debug-outline" />
+      <div className="viewport-debug-width-marker">
+        visualViewport.width: {info.visual.width}px
+      </div>
+      <div className="viewport-debug-height-marker">
+        visualViewport.height: {info.visual.height}px
+      </div>
+      <div className="viewport-debug-panel">
+        <strong>{info.browser} viewport marker</strong>
+        <span>visualViewport: {info.visual.width} x {info.visual.height}</span>
+        <span>inner: {info.inner.width} x {info.inner.height}</span>
+        <span>client: {info.documentElement.clientWidth} x {info.documentElement.clientHeight}</span>
+        <span>screen CSS: {info.screen.width} x {info.screen.height} @ {info.dpr}x</span>
+        <span>svh/dvh/lvh: {info.cssViewportUnits.svh} / {info.cssViewportUnits.dvh} / {info.cssViewportUnits.lvh}</span>
+        <span>safe bottom/top: {info.safeArea.bottom} / {info.safeArea.top}</span>
+        <span>scroll width: {info.documentElement.scrollWidth}</span>
+      </div>
+    </div>
+  );
+}
+
 function getPreviousScreen(id: ScreenId): ScreenId {
   const index = screens.findIndex((screen) => screen.id === id);
   return screens[Math.max(index - 1, 0)].id;
@@ -226,6 +413,10 @@ function FixedCta({ label, onClick }: { label: string; onClick: () => void }) {
 export function App() {
   const [screenId, setScreenId] = useState<ScreenId>('home');
   const [fixedControlNeeded, setFixedControlNeeded] = useState(true);
+  const [viewportDebugEnabled] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.has('vp') || params.get('debug') === 'viewport';
+  });
   const screen = screenById[screenId];
 
   const navigate = useCallback((nextScreenId?: ScreenId) => {
@@ -334,6 +525,8 @@ export function App() {
           <img alt="" key={src} src={src} />
         ))}
       </div>
+
+      {viewportDebugEnabled ? <ViewportDebugOverlay /> : null}
     </main>
   );
 }

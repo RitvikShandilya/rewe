@@ -221,3 +221,70 @@ button {
   width: 1px;
   height: 1px;
 }
+
+.viewport-debug {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  color: #ffffff;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 11px;
+  line-height: 1.35;
+  pointer-events: none;
+}
+
+.viewport-debug-outline {
+  position: fixed;
+  inset: 0;
+  border: 2px solid #ff3b00;
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 90%),
+    inset 0 0 0 5px rgb(255 59 0 / 18%);
+}
+
+.viewport-debug-width-marker,
+.viewport-debug-height-marker {
+  position: fixed;
+  z-index: 101;
+  padding: 3px 6px;
+  color: #111111;
+  white-space: nowrap;
+  background: #fff200;
+  border: 1px solid #111111;
+  border-radius: 3px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 18%);
+}
+
+.viewport-debug-width-marker {
+  left: 50%;
+  bottom: 4px;
+  transform: translateX(-50%);
+}
+
+.viewport-debug-height-marker {
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%) rotate(90deg);
+  transform-origin: right center;
+}
+
+.viewport-debug-panel {
+  position: fixed;
+  left: 8px;
+  top: 8px;
+  z-index: 101;
+  display: grid;
+  max-width: calc(100vw - 58px);
+  gap: 2px;
+  padding: 8px;
+  background: rgb(0 0 0 / 82%);
+  border: 1px solid rgb(255 255 255 / 45%);
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 26%);
+}
+
+.viewport-debug-panel strong {
+  margin-bottom: 3px;
+  color: #fff200;
+  font-size: 12px;
+}
