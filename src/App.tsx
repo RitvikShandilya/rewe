@@ -15,7 +15,8 @@ type PrototypeMode = 'browser' | 'pwa';
 const browserDesignWidth = 393;
 const browserDesignHeight = 804;
 const pwaDesignWidth = 393;
-const pwaDesignHeight = 852;
+const pwaDesignHeight = 804;
+const pwaCropTop = 48;
 
 const pwaScreenImages = [
   new URL('./assets/pwa/screen-01.png', import.meta.url).href,
@@ -490,7 +491,10 @@ const pwaScreens: Screen[] = pwaScreenImages.map((image, index) => ({
   id: pwaScreenId(index + 1),
   title: `Screen ${String(index + 1).padStart(2, '0')}`,
   image,
-  hotspots: pwaHotspots[index] ?? [],
+  hotspots: (pwaHotspots[index] ?? []).map((hotspot) => ({
+    ...hotspot,
+    top: Math.max(hotspot.top - pwaCropTop, 0),
+  })),
 }));
 
 const preloadImageSources = Array.from(
