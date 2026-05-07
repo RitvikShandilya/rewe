@@ -100,6 +100,11 @@ button {
   transform-origin: top center;
 }
 
+.prototype-stage--pwa .screen-image {
+  width: calc(var(--screen-width) + 2px);
+  transform: translateX(-1px);
+}
+
 .fixed-control-layer {
   position: fixed;
   z-index: 5;

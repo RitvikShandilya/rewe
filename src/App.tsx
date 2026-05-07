@@ -36,6 +36,7 @@ const pwaScreenImages = [
   new URL('./assets/pwa/screen-15.png', import.meta.url).href,
   new URL('./assets/pwa/screen-16.png', import.meta.url).href,
   new URL('./assets/pwa/screen-17.png', import.meta.url).href,
+  new URL('./assets/pwa/screen-18.png', import.meta.url).href,
 ];
 
 type Hotspot = {
@@ -468,9 +469,9 @@ const pwaHotspots: Hotspot[][] = [
     {
       label: 'Finish shopping',
       left: 0,
-      top: 692,
+      top: 48,
       width: 393,
-      height: 160,
+      height: 804,
       to: pwaScreenId(16),
     },
   ],
@@ -482,6 +483,16 @@ const pwaHotspots: Hotspot[][] = [
       width: 370,
       height: 84,
       to: pwaScreenId(17),
+    },
+  ],
+  [
+    {
+      label: 'Create weekly basket',
+      left: 28,
+      top: 566,
+      width: 337,
+      height: 49,
+      to: pwaScreenId(18),
     },
   ],
   [],

@@ -32,6 +32,7 @@ const frames = [
   ['screen-15.png', '272:5835'],
   ['screen-16.png', '272:6349'],
   ['screen-17.png', '272:5902'],
+  ['screen-18.png', '272:6910'],
 ];
 
 function assertOk(response, context) {
@@ -40,9 +41,9 @@ function assertOk(response, context) {
   }
 }
 
-async function renderFrameUrls() {
+async function renderFrameUrls(frameEntries) {
   const params = new URLSearchParams({
-    ids: frames.map(([, id]) => id).join(','),
+    ids: frameEntries.map(([, id]) => id).join(','),
     format: 'png',
     scale: String(scale),
   });
@@ -53,7 +54,11 @@ async function renderFrameUrls() {
     },
   });
 
-  assertOk(response, 'Figma render request');
+  if (!response.ok) {
+    const body = await response.text();
+    throw new Error(`Figma render request failed: ${response.status} ${response.statusText} ${body}`);
+  }
+
   const body = await response.json();
 
   if (body.err) {
@@ -61,6 +66,17 @@ async function renderFrameUrls() {
   }
 
   return body.images;
+}
+
+async function renderAllFrameUrls() {
+  const images = {};
+  const chunkSize = 8;
+
+  for (let index = 0; index < frames.length; index += chunkSize) {
+    Object.assign(images, await renderFrameUrls(frames.slice(index, index + chunkSize)));
+  }
+
+  return images;
 }
 
 async function download(url, targetPath) {
@@ -95,7 +111,7 @@ async function cropPng(sourcePath, targetPath) {
   }
 }
 
-const images = await renderFrameUrls();
+const images = await renderAllFrameUrls();
 const manifest = {
   fileKey,
   scale,
