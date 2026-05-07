@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
+    "export:figma:pwa": "node scripts/export-figma-pwa-assets.mjs",
     "postbuild": "cp dist/index.html dist/404.html && mkdir -p dist/pwa && cp dist/index.html dist/pwa/index.html",
     "preview": "vite preview"
   },
