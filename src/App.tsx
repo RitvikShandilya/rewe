@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import customizeBasketCleanImage from './assets/customize-basket-clean.png';
 import customizeBasketImage from './assets/customize-basket.png';
 import homeImage from './assets/home.png';
@@ -897,6 +897,39 @@ function Prototype({ mode }: { mode: PrototypeMode }) {
 }
 
 function FigmaPrototypeWrapper() {
+  useLayoutEffect(() => {
+    const setPwaViewportSize = () => {
+      const viewport = window.visualViewport;
+      const measuredWidth = viewport?.width ?? window.innerWidth;
+      const measuredHeight = viewport?.height ?? window.innerHeight;
+      const isPhoneWidth = Math.min(measuredWidth, window.innerWidth, window.screen.width) <= 500;
+      const width = isPhoneWidth
+        ? Math.max(measuredWidth, window.innerWidth, window.screen.width)
+        : measuredWidth;
+      const height = isPhoneWidth
+        ? Math.max(measuredHeight, window.innerHeight, window.screen.height)
+        : measuredHeight;
+
+      document.documentElement.style.setProperty('--pwa2-viewport-width', `${Math.round(width)}px`);
+      document.documentElement.style.setProperty('--pwa2-viewport-height', `${Math.round(height)}px`);
+    };
+
+    setPwaViewportSize();
+    window.visualViewport?.addEventListener('resize', setPwaViewportSize);
+    window.visualViewport?.addEventListener('scroll', setPwaViewportSize);
+    window.addEventListener('resize', setPwaViewportSize);
+    window.addEventListener('orientationchange', setPwaViewportSize);
+
+    return () => {
+      document.documentElement.style.removeProperty('--pwa2-viewport-width');
+      document.documentElement.style.removeProperty('--pwa2-viewport-height');
+      window.visualViewport?.removeEventListener('resize', setPwaViewportSize);
+      window.visualViewport?.removeEventListener('scroll', setPwaViewportSize);
+      window.removeEventListener('resize', setPwaViewportSize);
+      window.removeEventListener('orientationchange', setPwaViewportSize);
+    };
+  }, []);
+
   useEffect(() => {
     document.documentElement.dataset.prototypeMode = 'pwa2';
     document.body.dataset.prototypeMode = 'pwa2';
