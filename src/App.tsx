@@ -14,7 +14,7 @@ type PrototypeMode = 'browser' | 'pwa';
 type AppRoute = PrototypeMode | 'pwa2';
 
 const figmaPrototypeEmbedUrl =
-  'https://embed.figma.com/proto/XIiPagYAEkq2gtLIkqWiwV/Rewe-App-Loyalty--Future-Concept?node-id=322-15231&viewport=217%2C49%2C0.04&t=EnuTqtrBKLYl4uso-8&scaling=scale-down&content-scaling=fixed&starting-point-node-id=322%3A15938&page-id=62%3A5202&hide-ui=1&embed-host=share';
+  'https://embed.figma.com/proto/UWxfpRZXIAzcvutg7dusae/ReweApp-Final?node-id=0-3056&viewport=166%2C305%2C0.06&t=8JR93ooWY3vfE2B9-1&scaling=min-zoom&content-scaling=fixed&starting-point-node-id=0%3A3056&page-id=0%3A1&hide-ui=1&embed-host=share';
 
 const browserDesignWidth = 393;
 const browserDesignHeight = 804;
