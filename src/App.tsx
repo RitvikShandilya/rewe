@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import customizeBasketCleanImage from './assets/customize-basket-clean.png';
 import customizeBasketImage from './assets/customize-basket.png';
 import homeImage from './assets/home.png';
@@ -15,6 +15,8 @@ type AppRoute = PrototypeMode | 'pwa2';
 
 const figmaPrototypeEmbedUrl =
   'https://embed.figma.com/proto/UWxfpRZXIAzcvutg7dusae/ReweApp-Final?node-id=0-3056&viewport=166%2C305%2C0.06&t=8JR93ooWY3vfE2B9-1&scaling=min-zoom&content-scaling=fixed&starting-point-node-id=0%3A3056&page-id=0%3A1&hide-ui=1&embed-host=share';
+const figmaEmbedDesignWidth = 393;
+const figmaEmbedDesignHeight = 804;
 
 const browserDesignWidth = 393;
 const browserDesignHeight = 804;
@@ -901,6 +903,35 @@ function FigmaPrototypeWrapper() {
     document.body.dataset.prototypeMode = 'pwa2';
     return () => {
       delete document.body.dataset.prototypeMode;
+    };
+  }, []);
+
+  useLayoutEffect(() => {
+    const updateViewportFit = () => {
+      const viewport = window.visualViewport;
+      const width = viewport?.width ?? window.innerWidth;
+      const height = viewport?.height ?? window.innerHeight;
+      const coverScale = Math.max(
+        width / figmaEmbedDesignWidth,
+        height / figmaEmbedDesignHeight,
+      );
+
+      document.documentElement.style.setProperty('--figma-embed-scale', `${coverScale}`);
+    };
+
+    updateViewportFit();
+
+    window.visualViewport?.addEventListener('resize', updateViewportFit);
+    window.visualViewport?.addEventListener('scroll', updateViewportFit);
+    window.addEventListener('resize', updateViewportFit);
+    window.addEventListener('orientationchange', updateViewportFit);
+
+    return () => {
+      document.documentElement.style.removeProperty('--figma-embed-scale');
+      window.visualViewport?.removeEventListener('resize', updateViewportFit);
+      window.visualViewport?.removeEventListener('scroll', updateViewportFit);
+      window.removeEventListener('resize', updateViewportFit);
+      window.removeEventListener('orientationchange', updateViewportFit);
     };
   }, []);
 
