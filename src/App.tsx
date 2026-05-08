@@ -898,9 +898,25 @@ function Prototype({ mode }: { mode: PrototypeMode }) {
 
 function FigmaPrototypeWrapper() {
   useEffect(() => {
+    document.documentElement.dataset.prototypeMode = 'pwa2';
     document.body.dataset.prototypeMode = 'pwa2';
+
+    const lockScroll = () => window.scrollTo(0, 0);
+    const preventParentTouchScroll = (event: TouchEvent) => {
+      if (event.target === document.documentElement || event.target === document.body) {
+        event.preventDefault();
+      }
+    };
+
+    lockScroll();
+    window.addEventListener('scroll', lockScroll);
+    document.addEventListener('touchmove', preventParentTouchScroll, { passive: false });
+
     return () => {
+      delete document.documentElement.dataset.prototypeMode;
       delete document.body.dataset.prototypeMode;
+      window.removeEventListener('scroll', lockScroll);
+      document.removeEventListener('touchmove', preventParentTouchScroll);
     };
   }, []);
 

@@ -46,8 +46,23 @@ body[data-prototype-mode="pwa"] {
 }
 
 body[data-prototype-mode="pwa2"] {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
   background: #000000;
+  overscroll-behavior: none;
+}
+
+html[data-prototype-mode="pwa2"],
+body[data-prototype-mode="pwa2"] #root {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
 }
 
 button {
@@ -122,11 +137,12 @@ button {
 .figma-embed-stage {
   position: fixed;
   inset: 0;
-  width: 100vw;
-  height: 100vh;
-  height: 100dvh;
+  width: auto;
+  height: auto;
   overflow: hidden;
   background: #000000;
+  overscroll-behavior: none;
+  touch-action: none;
 }
 
 .figma-embed-frame {
