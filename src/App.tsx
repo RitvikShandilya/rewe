@@ -14,7 +14,7 @@ type PrototypeMode = 'browser' | 'pwa';
 type AppRoute = PrototypeMode | 'pwa2';
 
 const figmaPrototypeEmbedUrl =
-  'https://embed.figma.com/proto/UWxfpRZXIAzcvutg7dusae/ReweApp-Final?node-id=0-3056&viewport=166%2C305%2C0.06&t=8JR93ooWY3vfE2B9-1&scaling=min-zoom&content-scaling=fixed&starting-point-node-id=0%3A3056&page-id=0%3A1&hide-ui=1&embed-host=share';
+  'https://embed.figma.com/proto/UWxfpRZXIAzcvutg7dusae/ReweApp-Final?node-id=1-4235&viewport=247%2C-1370%2C0.53&t=uoq2pT4ZoVwAaKFY-1&scaling=min-zoom&content-scaling=fixed&starting-point-node-id=1%3A4235&page-id=0%3A1&hide-ui=1&embed-host=share';
 const figmaEmbedDesignWidth = 393;
 const figmaEmbedDesignHeight = 804;
 
