@@ -1,0 +1,22 @@
+{
+  "name": "REWE Figma Prototype",
+  "short_name": "REWE Figma",
+  "start_url": "/rewe/pwa2/",
+  "scope": "/rewe/",
+  "display": "fullscreen",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/rewe/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/rewe/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

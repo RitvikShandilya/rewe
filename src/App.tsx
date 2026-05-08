@@ -11,6 +11,10 @@ import readyBasketImage from './assets/ready-basket.png';
 
 type ScreenId = string;
 type PrototypeMode = 'browser' | 'pwa';
+type AppRoute = PrototypeMode | 'pwa2';
+
+const figmaPrototypeEmbedUrl =
+  'https://embed.figma.com/proto/XIiPagYAEkq2gtLIkqWiwV/Rewe-App-Loyalty--Future-Concept?node-id=322-15231&viewport=217%2C49%2C0.04&t=EnuTqtrBKLYl4uso-8&scaling=scale-down&content-scaling=fixed&starting-point-node-id=322%3A15938&page-id=62%3A5202&hide-ui=1&embed-host=share';
 
 const browserDesignWidth = 393;
 const browserDesignHeight = 804;
@@ -518,8 +522,13 @@ const preloadImageSources = Array.from(
   ),
 ) as string[];
 
-function getPrototypeMode(): PrototypeMode {
+function getAppRoute(): AppRoute {
   const path = window.location.pathname.replace(/\/+$/, '');
+
+  if (path.endsWith('/pwa2')) {
+    return 'pwa2';
+  }
+
   return path.endsWith('/pwa') ? 'pwa' : 'browser';
 }
 
@@ -887,6 +896,33 @@ function Prototype({ mode }: { mode: PrototypeMode }) {
   );
 }
 
+function FigmaPrototypeWrapper() {
+  useEffect(() => {
+    document.body.dataset.prototypeMode = 'pwa2';
+    return () => {
+      delete document.body.dataset.prototypeMode;
+    };
+  }, []);
+
+  return (
+    <main className="figma-embed-stage" aria-label="REWE Figma prototype wrapper">
+      <iframe
+        allow="fullscreen"
+        allowFullScreen
+        className="figma-embed-frame"
+        src={figmaPrototypeEmbedUrl}
+        title="REWE Figma prototype"
+      />
+    </main>
+  );
+}
+
 export function App() {
-  return <Prototype mode={getPrototypeMode()} />;
+  const route = getAppRoute();
+
+  if (route === 'pwa2') {
+    return <FigmaPrototypeWrapper />;
+  }
+
+  return <Prototype mode={route} />;
 }

@@ -45,6 +45,11 @@ body[data-prototype-mode="pwa"] {
   background-size: var(--frame-width) var(--frame-height);
 }
 
+body[data-prototype-mode="pwa2"] {
+  overflow: hidden;
+  background: #000000;
+}
+
 button {
   font: inherit;
 }
@@ -112,6 +117,24 @@ button {
 .prototype-stage--pwa .screen-image {
   width: calc(var(--screen-width) + 2px);
   transform: translateX(-1px);
+}
+
+.figma-embed-stage {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background: #000000;
+}
+
+.figma-embed-frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: #000000;
+  border: 0;
 }
 
 .fixed-control-layer {
