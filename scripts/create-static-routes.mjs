@@ -13,6 +13,7 @@ const pwa2Html = indexHtml
     'content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no"',
   )
   .replace('/rewe/manifest.webmanifest', '/rewe/manifest-pwa2.webmanifest')
+  .replace('/rewe/icon-192.png', '/rewe/rewe-apple-touch.png')
   .replace('<meta name="theme-color" content="#008a7a" />', '<meta name="theme-color" content="#000000" />')
   .replace(
     '<meta name="apple-mobile-web-app-title" content="REWE Prototype" />',
